@@ -15,6 +15,7 @@ from pink import solve_ik
 from pink.tasks import FrameTask, PostureTask
 from pink.utils import custom_configuration_vector
 from pink.visualization import start_meshcat_visualizer
+import pinocchio as pin
 
 try:
     from loop_rate_limiters import RateLimiter
@@ -73,8 +74,14 @@ if __name__ == "__main__":
     while True:
         # Update task targets
         end_effector_target = end_effector_task.transform_target_to_world
+        print(f"t = {t:.3f} s, end-effector target: {end_effector_target.np}")
+        # end_effector_target.translation[0] = 0.2 
         end_effector_target.translation[1] = 0.5 + 0.05 * np.sin(2.0 * t) # Y: oscillation
         end_effector_target.translation[2] = 0.5 # Z: height
+
+        # yaw_angle = 0.1 * np.sin(1.5 * t)  #
+        # rot_z = pin.rpy.rpyToMatrix(0.0, 0.0, yaw_angle) # Yaw rotation
+        # end_effector_target.rotation = end_effector_target.rotation @ rot_z
 
         # Update visualization frames
         viewer["end_effector_target"].set_transform(end_effector_target.np)
